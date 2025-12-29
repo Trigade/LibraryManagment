@@ -68,3 +68,15 @@ class AuthorsRepository:
             authors.append(author)
         return authors
 
+    def get_entity_by_id(self, id, cursor):
+        cursor.execute("SELECT * FROM authors WHERE id=?", (id,))
+        row = cursor.fetchone()
+     
+        if row:
+
+            return Authors(
+                id=row["id"],
+                full_name=row["full_name"],
+                biography=row["biography"]
+            )
+        return None

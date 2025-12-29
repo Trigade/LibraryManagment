@@ -1,6 +1,6 @@
 import sqlite3 as sq
 from dtos.base_response import BaseResponse
-from dtos.author_response import AuthorResponse
+from dtos.author_response import AuthorResponse , AuthorUpdate
 
 class AuthorsService:
     def __init__(self,repository,db):
@@ -17,17 +17,26 @@ class AuthorsService:
             return BaseResponse(success=False,message=f"Yazar eklenirken veritabanı hatası oluştu {e}")
         except Exception as e:
             return BaseResponse(success=False,message=f"Yazar eklenirken beklenmedik bir hata oluştu {e}")
-    
-    def update_author(self,author)-> BaseResponse[int]:
+
+    def update_author(self,author_id,update_dto: AuthorUpdate)-> BaseResponse[int]:
         try:
             with self.__db as conn:
                 cursor = conn.cursor()
-                rowcount = self.__repository.update(author, cursor)
-                if rowcount == 0:
-                    return BaseResponse(success=False,message="Güncellenecek yazar bulunamadı")
-                return BaseResponse(success=True,message="Yazar başarıyla güncellendi", data=rowcount)
-        except sq.Error as e:
-            return BaseResponse(success=False,message=f"Güncelleme sırasında veritabanı hatası oluştu {e}")
+                existing_author = self.__repository.get_entity_by_id(author_id, cursor)
+                
+                if not existing_author:
+                    return BaseResponse(success=False,message="Güncellenecek yazar bulunumadı.")
+
+                if update_dto.full_name is not None:
+                    existing_author.full_name = update_dto.full_name
+
+                if update_dto.biography is not None:
+                    existing_author.biography = update_dto.biography
+                
+                rowcount = self.__repository.update(existing_author, cursor)
+
+                return BaseResponse(success=True, message="Yazar başarıyla güncellendi", data=rowcount)
+
         except Exception as e:
             return BaseResponse(success=False,message=f"Güncelleme sırasında beklenmeyen bir hata oluştu {e}")
 

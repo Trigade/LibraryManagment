@@ -10,6 +10,10 @@ class BooksService:
         try:
             with self.__db as conn:
                 cursor = conn.cursor()
+                existing_book = self.__repository.get_by_isbn(book.isbn,cursor)
+                if existing_book is not None:
+                    count = self.__repository.increase_stock(existing_book["id"],cursor)
+                    return BaseResponse(success=True,message="Kitabın stoğu arttırıldı.",data=count)
                 lastrowid = self.__repository.add(book,cursor)
                 return BaseResponse(success=True,message="Kitap başarıyla eklendi", data=lastrowid)
         except sq.Error as e:

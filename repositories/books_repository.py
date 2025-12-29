@@ -105,3 +105,27 @@ class BooksRepository:
             }
             book_list.append(book)
         return book_list
+
+    def increase_stock(self,id,cursor):
+        cursor.execute("""
+                        UPDATE books SET stock_quantity = stock_quantity + 1 WHERE id = ?
+                        """,
+                        (id,)
+        )
+        return cursor.rowcount
+
+    def get_by_isbn(self, isbn, cursor) -> dict | None:
+        cursor.execute(
+            """
+                SELECT  
+                books.isbn,
+                books.id
+                FROM books WHERE books.isbn=?
+            """,
+            (isbn,)
+        )
+        book = cursor.fetchone()
+        return {
+            "isbn": book["isbn"],
+            "id":book["id"]
+        } if book else None

@@ -7,10 +7,14 @@ class LoansService:
         self.__repository = repository
         self.__db = db
 
-    def add_loan(self,loan)->BaseResponse[int]:#kitap varmı ceza var mı bu kitap bu adamda var mı / karşılanırsa loan eklenir stock 1 düşer
+    def add_loan(self,loan,book_service,fine_service)->BaseResponse[int]:#kitap varmı ceza var mı bu kitap bu adamda var mı / karşılanırsa loan eklenir stock 1 düşer
         try:
             with self.__db as conn:
                 cursor = conn.cursor()
+                """
+                member = member_service.get_member()
+                get_loan_by_book_id
+                """
                 lastrowid = self.__repository.add(loan,cursor)
                 return BaseResponse(success=True,message="Borç başarıyla eklendi", data=lastrowid)
         except sq.Error as e:
