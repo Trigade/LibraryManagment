@@ -67,3 +67,6 @@ class CategoriesRepository:
             }
             categories.append(category)
         return categories
+    
+    def get_entity_by__id():
+        pass

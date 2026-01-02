@@ -3,7 +3,7 @@ from entities.authors import Authors
 
 class AuthorsRepository:
     def __init__(self):
-        pass
+        pass#
 
     def add(self, author, cursor):
         cursor.execute(
@@ -80,3 +80,4 @@ class AuthorsRepository:
                 biography=row["biography"]
             )
         return None
+
